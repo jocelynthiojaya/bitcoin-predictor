@@ -1,34 +1,34 @@
 import pandas as pd
 
-df_tweets=pd.read_csv('bitcoin_tweets.csv',
+# df_tweets=pd.read_csv('./datasets/bitcoin_tweets.csv',
+#     dtype={
+#         "user_name": object,
+#         "user_location": object,
+#         "user_description": object,
+#         "user_created": object,
+#         "user_followers": float,
+#         "user_friends": object,
+#         "user_favourites": object,
+#         "user_verified": object,
+#         "date": "string",
+#         "text": object,
+#         "hashtags": object,
+#         "source": object,
+#         "is_retweet": object
+#     })
+df_bitprice=pd.read_csv('./datasets/bitcoin_price.csv',
     dtype={
-        "user_name": object,
-        "user_location": object,
-        "user_description": object,
-        "user_created": object,
-        "user_followers": float,
-        "user_friends": object,
-        "user_favourites": object,
-        "user_verified": object,
-        "date": "string",
-        "text": object,
-        "hashtags": object,
-        "source": object,
-        "is_retweet": object
-    })
-df_bitstamp=pd.read_csv('bitstamp.csv', 
-    dtype={
-    "Timestamp": int, 
+    "Open Time": "string", 
     "Open": float,
     "High": float,
     "Low": float,
     "Close": float,
-    "Volume_(BTC)": float,
-    "Volume_(Currency)": float,
-    "Weighted_Price": float})
-
-#df_tweets.info()
-#df_bitstamp.info()
+    "Volume": float,
+    "Close Time": "string",
+    "Quote asset volume": float,
+    "Number of trades": int,
+    "Taker buy base asset volume": float,
+    "Taker buy quote asset volume": float})
 
 # PROCESS TWEETS
 # drop unwanted columns
@@ -43,8 +43,6 @@ df_tweets.drop(df_tweets[(df_tweets['date'].str.len() < 19) | (df_tweets['date']
 
 # convert date from string to datetime
 df_tweets['date'] = pd.to_datetime(df_tweets['date'])
-
-#print(df_tweets['date'].tail(5))
 #df_tweets.info()
 
 # write to csv
@@ -53,15 +51,32 @@ df_tweets['date'] = pd.to_datetime(df_tweets['date'])
 
 
 # PROCESS BITSTAMP
-# convert Timestamp from Unix int to datetime
-df_bitstamp['Timestamp'] = pd.to_datetime(df_bitstamp['Timestamp'],unit='s')
+# strip three zeros from unix time 
+df_bitprice['Open Time'] = (df_bitprice['Open Time']).str[:-3]
+df_bitprice['Close Time'] = (df_bitprice['Close Time']).str[:-3]
 
-# drop all rows before 2018
-df_bitstamp.drop(df_bitstamp[df_bitstamp['Timestamp']<"2018-01-01"].index, inplace = True)
+# convert Time from string to numeric
+df_bitprice['Open Time'] = pd.to_numeric(df_bitprice['Open Time'])
+df_bitprice['Close Time'] = pd.to_numeric(df_bitprice['Close Time'])
 
-#df_bitstamp.info()
-#print(df_bitstamp.head())
+# convert Time from Unix format to datetime
+df_bitprice['Open Time'] = pd.to_datetime(df_bitprice['Open Time'],unit='s')
+df_bitprice['Close Time'] = pd.to_datetime(df_bitprice['Close Time'],unit='s')
+
+# drop all rows before 2021 GAPERLU
+#df_bitprice.drop(df_bitprice[df_bitprice['Open Time']<"2021-01-01"].index, inplace = True)
+
+df_bitprice.info()
+print(df_bitprice['Open Time'].head())
+
+# rename 'Timestamp' column to 'date'
+#df_bitstamp.rename(columns={'Timestamp': 'date'}, inplace=True)
 
 # write to csv
 #df_bitstamp.to_csv('revised_bitstamp.csv', index=False)
 #print('Done')
+
+# MERGING
+# df = pd.merge(df_tweets, df_bitstamp, on='date', how='left')
+# df.info()
+# print(df.isnull().sum())
