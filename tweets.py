@@ -37,29 +37,34 @@ df_tweets['date'] = df_tweets['date'] + '00'
 # convert date from string to datetime
 df_tweets['date'] = pd.to_datetime(df_tweets['date'])
 
+# drop all data after after 12th May 2021
+df_tweets = df_tweets[~(df_tweets['date'] > '2021-05-12')]
+
 # find and drop strange data in user_favourites
 df_tweets = df_tweets[pd.to_numeric(df_tweets['user_favourites'], errors='coerce').notnull()]
 df_tweets['user_favourites'] = pd.to_numeric(df_tweets['user_favourites'])
 
 # convert text to sentimental value
-# analyzer = SentimentIntensityAnalyzer()
-# sentiments = []
-# sentences = df_tweets['text'].tolist()
-# for sentence in sentences:
-#      vs = analyzer.polarity_scores(sentence)
-#      sentiments.append(str(vs['compound']))
+analyzer = SentimentIntensityAnalyzer()
+sentiments = []
+sentences = df_tweets['text'].tolist()
+for sentence in sentences:
+     vs = analyzer.polarity_scores(sentence)
+     sentiments.append(str(vs['compound']))
 
-# df_tweets['sentimental_value'] = sentiments
+# add new column sentimental_value
+df_tweets['sentimental_value'] = sentiments
 
-# # drop text column
-# df_tweets = df_tweets.drop(columns=['text'])
+# drop text column
+df_tweets = df_tweets.drop(columns=['text'])
 
-# # reindex columns
-# df_tweets = df_tweets[['date', 'user_followers', 'user_favourites', 'user_verified', 'sentimental_value']]
+# reindex columns
+df_tweets = df_tweets[['date', 'user_followers', 'user_favourites', 'user_verified', 'sentimental_value']]
 
 df_tweets.info()
 print(df_tweets.head())
+print(df_tweets.tail())
 
 # write to csv
-#df_tweets.to_csv('revised_tweets.csv', index=False)
-#print('Done')
+df_tweets.to_csv('final_tweets.csv', index=False)
+print('Done')

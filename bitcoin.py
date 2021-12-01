@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-df_bitprice=pd.read_csv('./datasets/bitcoin_price.csv',
+df_bitprice=pd.read_csv('bitcoin_price.csv',
     dtype={
     "Open Time": "string", 
     "Close": float
@@ -62,4 +62,5 @@ df_bitprice.rename(columns={'Open Time': 'Date'},inplace=True)
 print(df_bitprice.head())
 
 # Write to CSV
-# df_bitprice.to_csv('datasets/bitcoin_price_clean.csv', index=False)
+df_bitprice.to_csv('datasets/bitcoin_price_clean.csv', index=False)
+print("Done")
