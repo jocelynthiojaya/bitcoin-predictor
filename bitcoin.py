@@ -56,11 +56,11 @@ df_bitprice = df_bitprice.drop(
     axis=1)
 
 # Renaming OpenTime into Date column
-df_bitprice.rename(columns={'Open Time': 'Date'},inplace=True)
+df_bitprice.rename(columns={'Open Time': 'date'},inplace=True)
 
 
 print(df_bitprice.head())
 
 # Write to CSV
-df_bitprice.to_csv('datasets/bitcoin_price_clean.csv', index=False)
+df_bitprice.to_csv('bitcoin_price_clean.csv', index=False)
 print("Done")
