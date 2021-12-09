@@ -77,7 +77,7 @@ for _ in range(1):
 
 
 
-clf.predict(X_test)
+# clf.predict(X_test)
 
 
 
